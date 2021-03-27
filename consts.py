@@ -1,0 +1,5 @@
+DATABASE_NAME = "tabs"
+NAME = "name"
+ID = "_id"
+DATA_POINTS = "data_points"
+DESCRIPTION = "description"
