@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodatabase
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 27018:27017
+    restart: unless-stopped
+    volumes:
+      - /home/zahoor/database:/data/db
