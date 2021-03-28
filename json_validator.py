@@ -1,16 +1,29 @@
-from flask import Response
-from jsonschema import validate, ValidationError
-from schema import add_tabs_schema
+from logging import getLogger
+from functools import wraps
+from flask import Response, request
+from jsonschema import validate, ValidationError, FormatChecker
 
-record = {"name": "ad", "description": "erer", "data_points":
-    [
-        {"data_type": "234", "label": 45, "description": "testings", "placeholder": "gb/3"}
-    ]
-          }
+LOGGER = getLogger("json_validator.py")
 
 
-def validate_json(schem, payload):
-    try:
-        print(validate(instance=payload, schema=schem))
-    except ValidationError:
-        return Response(status=400)
+def validate_json(schema=None):
+    """Validate input data regardless of the content type whether its a valid json or not"""
+
+    def json_decorator(func):
+        @wraps(func)
+        def json_validator(*args, **kwargs):
+            data = request.get_json(force=True)
+            if not data:
+                return Response(status=400)
+            if schema:
+                try:
+                    validate(data, schema, format_checker=FormatChecker())
+                except ValidationError as e:
+                    LOGGER.info(e.message)
+                    return Response(status=400)
+
+            return func(*args, **kwargs)
+
+        return json_validator
+
+    return json_decorator

@@ -61,7 +61,7 @@ def get_one_tabs(tabsID):
 
 # TODO Fix issue in json validator
 @app.route('/tabs', methods=['POST'])
-# @validate_json(add_tabs_schema)
+@validate_json(add_tabs_schema)
 def add_star():
     """
     Insert One record in tabs DB
