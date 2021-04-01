@@ -11,3 +11,11 @@ services:
     restart: unless-stopped
     volumes:
       - /home/zahoor/database:/data/db
+
+  web:
+    network_mode: host
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_DEBUG: 1

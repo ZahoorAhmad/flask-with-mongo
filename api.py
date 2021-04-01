@@ -1,7 +1,9 @@
 # mongo.py
 from copy import copy
+import logging
 
 from bson.objectid import ObjectId
+from bson.errors import InvalidId
 from flask import Response
 from flask import jsonify
 from flask import request
@@ -11,6 +13,8 @@ from consts import *
 from schema import add_tabs_schema
 from config import app, mongo, tabs
 
+
+LOGGER = logging.getLogger("api.py")
 
 @app.route('/tabs', methods=['GET'])
 def get_all_tabs():
@@ -39,7 +43,12 @@ def get_one_tabs(tabsID):
     :param tabsID: tabsID <str>
     :return: dictionary
     """
-    tab_record = tabs.find_one({ID: ObjectId(tabsID)})
+    try:
+        tab_record = tabs.find_one({ID: ObjectId(tabsID)})
+    except InvalidId as ex:
+        response = jsonify({"message": f"Invalid Object ID: {tabsID}"})
+        response.status_code = 400
+        return response
     if not tab_record:
         return Response(status=404)
     tab_record[ID] = tab_record[ID].__str__()
@@ -52,7 +61,7 @@ def get_one_tabs(tabsID):
 
 # TODO Fix issue in json validator
 @app.route('/tabs', methods=['POST'])
-# @validate_json(add_tabs_schema)
+@validate_json(add_tabs_schema)
 def add_star():
     """
     Insert One record in tabs DB
