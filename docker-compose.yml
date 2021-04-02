@@ -1,4 +1,4 @@
-version: "3.3"
+version: "2.0"
 services:
   mongodb:
     image: mongo
@@ -10,7 +10,7 @@ services:
       - 27018:27017
     restart: unless-stopped
     volumes:
-      - /home/zahoor/database:/data/db
+      - /root/database:/data/db
 
   web:
     network_mode: host
